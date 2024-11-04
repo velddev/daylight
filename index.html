@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <title>New Tab</title>
@@ -6,768 +6,82 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://google.com" />
         <link rel="preconnect" href="https://search.saltyaom.com" />
+        <link rel="stylesheet" href="./style.css" />
+        <script src="./script.js" defer></script>
 
         <link
             rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐳</text></svg>"
         />
 
-        <style>
-            html {
-                background-color: #efeff4;
-            }
-
-            * {
-                box-sizing: border-box;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                    Roboto, 'Helvetica Neue', Arial, sans-serif;
-            }
-
-            ::selection,
-            ::-webkit-selection {
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            #opened {
-                width: 100%;
-                min-height: 100vh;
-                margin: 0;
-                padding: 0 16px;
-                /* background: linear-gradient(
-                        rgba(0, 0, 0, 0) 100%,
-                        transparent 100%
-                    ),
-                    url(./blue_aka.png);
-                background-size: cover;
-                background-position: center; */
-            }
-
-            #bg,
-            #overlay {
-                position: fixed;
-                z-index: -2;
-                top: 0;
-                left: 0;
-                width: 100%;
-                min-height: 100vh;
-            }
-
-            #bg {
-                object-fit: cover;
-                object-position: center;
-            }
-
-            #overlay {
-                z-index: -1;
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            #app {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-self: center;
-                width: 100%;
-                max-width: 620px;
-                min-height: 100vh;
-                margin: 0 auto;
-                padding: 16px 0 52px 0;
-            }
-
-            #time {
-                z-index: 0;
-                top: calc(50vh - 120px - 100px);
-                left: 0;
-                margin: 0;
-                position: absolute;
-                width: 100%;
-                text-align: center;
-                font-size: 120px;
-                /* font-variant-numeric: tabular-nums; */
-                font-weight: 600;
-                opacity: 0.9;
-                color: #fff;
-                user-select: none;
-                /* text-shadow: 0 8px 32px rgba(255, 255, 255, 0.375);
-                text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
-                    -1px -1px 0 #000; */
-            }
-
-            #search {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                width: 100%;
-                height: 56px;
-                color: #fff;
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                background-color: rgba(0, 0, 0, 0.2);
-                backdrop-filter: blur(12px);
-                /* border: 3px solid #eee; */
-                border-radius: 12px;
-                /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.0875),
-                    0 4px 16px rgba(0, 0, 0, 0.0875),
-                    0 8px 32px rgba(0, 0, 0, 0.0875); */
-                overflow: hidden;
-            }
-
-            #search > .icon {
-                color: currentColor;
-                margin: 0 12px 0 16px;
-            }
-
-            #search > .input {
-                display: flex;
-                flex: 1;
-                height: inherit;
-                font-weight: 400;
-                padding: 0;
-                color: currentColor;
-                appearance: none;
-                font-size: 24px;
-                background-color: transparent;
-                border: 0;
-                outline: none;
-                user-select: none;
-            }
-
-            #search > .input::placeholder {
-                color: #fff;
-                font-weight: 400;
-            }
-
-            #search > .submit {
-                appearance: none;
-                width: 56px;
-                height: 56px;
-                padding: 0;
-                color: currentColor;
-                background-color: transparent;
-                border: 0;
-                outline: none;
-                transition:
-                    color 0.15s ease-out,
-                    background-color 0.15s ease-out;
-                cursor: pointer;
-            }
-
-            #search > .submit:hover,
-            #search > .submit:focus {
-                /* color: rgb(0, 123, 255); */
-                background-color: rgba(255, 255, 255, 0.25);
-            }
-
-            #status {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                gap: 16px;
-                width: 100%;
-                color: #fff;
-                transform: translateY(-16px);
-                user-select: none;
-            }
-
-            .status {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                font-size: 16px;
-                font-weight: 400;
-                margin: 0;
-                text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-            }
-
-            #battery {
-                margin-left: 8px;
-            }
-
-            #suggestion {
-                position: absolute;
-                z-index: 10;
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                max-height: calc(50vh - 64px);
-                color: #fff;
-                gap: 4px;
-                margin-top: 8px;
-                padding: 8px 44px;
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                background-color: rgba(0, 0, 0, 0.2);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(12px);
-                border-radius: 12px;
-                overflow-y: auto;
-            }
-
-            .-custom-scrollbar::-webkit-scrollbar {
-                width: 0.75vw;
-                background-color: transparent;
-            }
-
-            .-custom-scrollbar::-webkit-scrollbar-thumb {
-                background-color: rgba(255, 255, 255, 0.375);
-                border-radius: 99px;
-            }
-
-            /* #suggestion::-webkit-scrollbar-thumb */
-
-            .suggest {
-                width: 100%;
-                color: #fff;
-                font-size: 21px;
-                font-weight: 400;
-                text-decoration: none;
-                gap: 4px;
-                padding: 8px 8px;
-                border-radius: inherit;
-                border: 1px solid transparent;
-                outline: none;
-                transition:
-                    background-color 0.12s ease-out,
-                    border-color 0.12s ease-out;
-                cursor: pointer;
-            }
-
-            .suggest:hover,
-            .suggest:focus {
-                background-color: rgba(255, 255, 255, 0.125);
-            }
-
-            .suggest:hover {
-                border-color: rgba(255, 255, 255, 0.25);
-            }
-
-            .suggest:focus {
-                border-color: #fff;
-            }
-
-            #engine {
-                position: relative;
-                margin-top: 16px;
-            }
-
-            #pin {
-                position: absolute;
-                display: grid;
-                grid-template-columns: repeat(9, minmax(0, 1fr));
-                gap: 8px;
-                margin-top: 12px;
-                user-select: none;
-            }
-
-            #pin > a,
-            #pin > button {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                width: 44px;
-                height: 44px;
-                padding: 8px;
-                border-radius: 12px;
-                background-color: rgba(0, 0, 0, 0.125);
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                backdrop-filter: blur(12px);
-                transition: transform 0.1s ease-out;
-            }
-
-            #pin > a:hover,
-            #pin > a:focus,
-            #pin > button:hover,
-            #pin > a:focus {
-                transform: scale(1.2);
-                outline-color: #fff;
-                outline-offset: 4px;
-                outline-width: 1px;
-                /* background-color: rgba(255, 255, 255, 0.125); */
-            }
-        </style>
-        <script>
-            const id = (id) => document.getElementById(id)
-
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('bg:time', id('bg').currentTime)
-            })
-
-            const composeLink = (search) => {
-                if (search.startsWith('//') || /(.*)[\.](.*)$/.test(search))
-                    return `https:${search}`
-
-                if (search.startsWith(':')) return `http://0.0.0.0${search}`
-
-                if (search.startsWith('gh '))
-                    return `http://github.com/${search.slice(3)}`
-
-                if (search.startsWith('yt '))
-                    return `https://www.youtube.com/results?search_query=${search.slice(
-                        3
-                    )}`
-
-                if (!Number.isNaN(+search) && id('pin').children[+search - 1])
-                    return id('pin').children[+search - 1].href
-
-                if (search.startsWith('ask '))
-                    return `https://www.perplexity.ai/search/new?q=${search.slice(3)}`
-
-                if (search.startsWith('gpt'))
-                    return `https://chat.openai.com/?q=${search}`
-
-                if (search.startsWith('cl '))
-                    return `https://claude.ai/new?q=${search.slice(3)}`
-
-                return `https://www.google.com/search?q=${search}`
-            }
-
-            document.addEventListener(
-                'DOMContentLoaded',
-                async () => {
-                    const searchBox = id('search-value')
-                    const displayedHour = id('hour')
-                    const displayedMinute = id('minute')
-
-                    window.focus()
-                    searchBox.focus()
-
-                    // Continue video from last time
-                    const timestamp = localStorage.getItem('bg:time')
-                    if (timestamp) {
-                        const bg = id('bg')
-                        bg.currentTime = timestamp
-                    }
-
-                    // Clock
-                    let clearSecondClock = false
-                    let secondClock
-
-                    const startClock = (initial = false) => {
-                        const time = new Date()
-
-                        const hour = time.getHours()
-                        const minute = time.getMinutes()
-
-                        if (displayedMinute.textContent == minute) return
-
-                        displayedMinute.textContent =
-                            minute <= 9 ? `0${minute}` : minute
-
-                        if (!clearSecondClock && !initial) {
-                            clearSecondClock = true
-                            clearInterval(secondClock)
-                            setInterval(startClock, 60000)
-                        }
-
-                        if (displayedHour.textContent != hour)
-                            displayedHour.textContent = hour
-                    }
-
-                    startClock(true)
-
-                    secondClock = setInterval(
-                        startClock,
-                        (60 - new Date().getSeconds()) * 1000
-                    )
-
-                    id('search').addEventListener('submit', (event) => {
-                        event.preventDefault()
-
-                        window.location.assign(composeLink(searchBox.value))
-                    })
-
-                    const battery = await navigator.getBattery()
-
-                    id('battery').textContent = (battery.level * 100).toFixed(0)
-                    battery.onlevelchange = () => {
-                        id('battery').textContent = (
-                            battery.level * 100
-                        ).toFixed(0)
-                    }
-
-                    const charging = (isCharging = false) => {
-                        id('charging').style.display = isCharging
-                            ? 'block'
-                            : 'none'
-                        id('on-battery').style.display = isCharging
-                            ? 'none'
-                            : 'block'
-                    }
-
-                    charging(battery.charging)
-                    battery.onchargingchange = () => charging(battery.charging)
-
-                    const updateWifiStatus = (isOnline = false) => {
-                        id('wifi-on').style.display = isOnline
-                            ? 'block'
-                            : 'none'
-                        id('wifi-off').style.display = isOnline
-                            ? 'none'
-                            : 'block'
-                    }
-
-                    updateWifiStatus(navigator.onLine)
-                    window.addEventListener('offline', () => {
-                        updateWifiStatus(navigator.onLine)
-                    })
-                    window.addEventListener('online', () => {
-                        updateWifiStatus(navigator.onLine)
-                    })
-
-                    const suggestionTemplate = id('t-suggest')
-                    const suggestionBox = id('suggestion')
-
-                    const isMac =
-                        navigator.platform.toUpperCase().indexOf('MAC') >= 0
-
-                    if (!isMac) suggestionBox.classList.add('-custom-scrollbar')
-
-                    const updateSuggestion = (suggestions = []) => {
-                        suggestionBox.style.display = suggestions.length
-                            ? 'flex'
-                            : 'none'
-
-                        while (suggestionBox.firstChild)
-                            suggestionBox.removeChild(suggestionBox.firstChild)
-
-                        suggestions.map((suggest) => {
-                            const template =
-                                suggestionTemplate.content.cloneNode(true)
-
-                            const suggestion = template.children[0]
-                            suggestion.textContent = suggest.label
-                            suggestion.href = suggest.href
-
-                            suggestion.addEventListener('keydown', (event) => {
-                                const current = event.currentTarget
-
-                                if (
-                                    current === document.activeElement &&
-                                    event.code === 'ArrowDown'
-                                )
-                                    current.nextElementSibling.focus()
-
-                                if (
-                                    current === document.activeElement &&
-                                    event.code === 'ArrowUp'
-                                )
-                                    if (current.previousElementSibling)
-                                        current.previousElementSibling.focus()
-                                    else {
-                                        searchBox.focus()
-                                        requestAnimationFrame(() => {
-                                            searchBox.setSelectionRange(
-                                                searchBox.value.length,
-                                                searchBox.value.length
-                                            )
-                                        })
-                                    }
-
-                                if (
-                                    current === document.activeElement &&
-                                    event.code === 'Tab'
-                                ) {
-                                    searchBox.value = current.textContent
-                                    requestAnimationFrame(() => {
-                                        searchBox.focus()
-                                        fetchSuggestion()
-                                    })
-                                }
-                            })
-
-                            suggestionBox.appendChild(template)
-
-                            suggestionBox.scrollTo(0, 0)
-                        })
-                    }
-
-                    let abortController = new AbortController()
-
-                    const fetchSuggestion = () => {
-                        abortController.abort()
-                        abortController = new AbortController()
-
-                        // Remove Japanese character joiner
-                        let value = searchBox.value.replace(/\\\b/g, '')
-
-                        if (!Number.isNaN(+value)) {
-                            const index = +value
-                            const pin = id('pin').children[index - 1]
-
-                            if (pin) {
-                                let label = pin.href.split('://')[1]
-                                if (label.endsWith('/'))
-                                    label = label.slice(0, -1)
-
-                                return updateSuggestion([
-                                    { label, href: pin.href }
-                                ])
-                            }
-                        }
-
-                        if (!value) return updateSuggestion([])
-
-                        let prefix = ''
-                        if (
-                            value.startsWith('gh ') ||
-                            value.startsWith('yt ') ||
-                            value.startsWith('cl ')
-                        ) {
-                            prefix = value.slice(0, 2) + ' '
-                            value = value.slice(3)
-                        } else {
-                            if (
-                                value.startsWith('gpt ') ||
-                                value.startsWith('ask ')
-                            ) {
-                                prefix = value.slice(0, 3) + ' '
-                                value = value.slice(4)
-                            }
-                        }
-
-                        fetch(`https://search.saltyaom.com/hint/${value}`, {
-                            signal: abortController.signal
-                        })
-                            .then((res) => res.json())
-                            .catch()
-                            .then(([_, ...suggestions] = []) => {
-                                if (!suggestions && !value) updateSuggestion([])
-
-                                updateSuggestion(
-                                    suggestions.map((suggestion) => ({
-                                        label: suggestion,
-                                        href: composeLink(prefix + suggestion)
-                                    }))
-                                )
-                            })
-                    }
-
-                    searchBox.addEventListener('input', fetchSuggestion, {
-                        passive: true
-                    })
-
-                    searchBox.addEventListener('keydown', (event) => {
-                        if (
-                            searchBox !== document.activeElement ||
-                            event.code !== 'ArrowDown'
-                        )
-                            return
-
-                        if (suggestionBox.firstElementChild)
-                            requestAnimationFrame(() => {
-                                suggestionBox.firstElementChild.focus()
-                            })
-                    })
-
-                    // const bg = id('bg')
-                    // window.addEventListener('focus', () => {
-                    //     bg.play()
-                    // })
-
-                    // window.addEventListener('blur', () => {
-                    //     bg.pause()
-                    // })
-                },
-                {
-                    once: true
-                }
-            )
-        </script>
     </head>
     <template id="t-suggest">
         <a class="suggest"></a>
     </template>
 
     <body id="opened">
-        <div id="overlay"></div>
-        <video id="bg" autoplay muted loop>
-            <source src="./ba_pv1.mp4" />
-        </video>
-        <main id="app">
-            <h1 id="time">
-                <span id="hour">9</span>:<span id="minute">41</span>
-            </h1>
+      <div id="overlay"></div>
+      <video id="bg" autoplay muted loop>
+        <source src="./vid_src.mp4" />
+      </video>
+      <main id="app">
+        <h1 id="time">
+            <span id="hour">9</span>:<span id="minute">41</span>
+        </h1>
 
-            <div id="status">
-                <p class="status">
-                    <svg
-                        id="wifi-on"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-wifi"
-                    >
-                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
-                    </svg>
-
-                    <svg
-                        id="wifi-off"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-wifi-off"
-                        style="display: none"
-                    >
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                        <path
-                            d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"
-                        ></path>
-                        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-                        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
-                        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
-                    </svg>
-                </p>
-                <p class="status">
-                    <svg
-                        id="on-battery"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-battery"
-                    >
-                        <rect
-                            x="1"
-                            y="6"
-                            width="18"
-                            height="12"
-                            rx="2"
-                            ry="2"
-                        ></rect>
-                        <line x1="23" y1="13" x2="23" y2="11"></line>
-                    </svg>
-
-                    <svg
-                        id="charging"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="feather feather-battery-charging"
-                        style="display: none"
-                    >
-                        <path
-                            d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.19M15 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3.19"
-                        ></path>
-                        <line x1="23" y1="13" x2="23" y2="11"></line>
-                        <polyline points="11 6 7 12 13 12 9 18"></polyline>
-                    </svg>
-
-                    <span id="battery">42</span>%
-                </p>
+        <div id="engine">
+          <form id="search">
+            <div class="input-search-element">
+              <div class="input-search-element-inner transition" id="search-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon"
+                >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <div class="input-search-element-inner transition fade-out-down" id="search-icon-override">
+                
+              </div>
             </div>
+            <input
+                id="search-value"
+                autocomplete="off"
+                class="input"
+                placeholder="Search"
+                type="text"
+                autofocus
+            />
+          </form>
 
-            <div id="engine">
-                <form id="search">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="3"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="icon"
-                    >
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input
-                        id="search-value"
-                        autocomplete="off"
-                        class="input"
-                        placeholder="Search"
-                        type="text"
-                        autofocus
-                    />
-                    <button id="search-submit" class="submit">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="feather feather-send"
-                        >
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon
-                                points="22 2 15 22 11 13 2 9 22 2"
-                            ></polygon>
-                        </svg>
-                    </button>
-                </form>
-
-                <section id="suggestion" style="display: none"></section>
-
-                <section id="pin">
-                    <a href="https://facebook.com">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"
-                            />
-                        </svg>
-                    </a>
-                    <a href="https://x.com">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
-                            />
-                        </svg>
-                    </a>
-                    <a href="https://bsky.app">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 576 512"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"
-                            />
-                        </svg>
-                    </a>
-                </section>
-            </div>
-        </main>
+          <section id="pin">
+            <a href="https://x.com">
+              <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M459.4 151.7c.3 4.5 .3 9.1 .3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53 51.7 63.7 129.3 105.3 216.4 109.8-1.6-7.8-2.6-15.9-2.6-24 0-57.8 46.8-104.9 104.9-104.9 30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3z"/>
+              </svg>
+            </a>
+            <a href="https://bsky.app">
+              <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor">
+                <path d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"
+                />
+              </svg>
+            </a>
+            <a href="https://youtube.com">
+              <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor">
+                <path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z"/>
+              </svg>
+            </a>
+          </section>
+        </div>
+      </main>
     </body>
 </html>
