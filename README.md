@@ -1,59 +1,50 @@
-# Clear Morning
-Chrome/Edge "New Tab" page.
+# React + TypeScript + Vite
 
-![Screen Shot 2564-08-28 at 13 51 57](https://user-images.githubusercontent.com/35027979/131209709-94f148a3-1378-4c0b-9e29-490d8061f2c6.png)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Feature:
-- Google suggestion
-- Customizable short cut
-- Video background
+Currently, two official plugins are available:
 
-## Prerequisted
-- Chromium Browser
-- [New Tab Changer Extension](https://chrome.google.com/webstore/detail/new-tab-changer/occbjkhimchkolibngmcefpjlbknggfh?hl=en)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Setup
-1. Clone the repo
+## Expanding the ESLint configuration
 
-2. Go to new tab changer, point to local repo -> index.html
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-## Search bar
-When opening a new tab, the browser search bar will be focused (not the in-page search).
+- Configure the top-level `parserOptions` property like this:
 
-To use the page search bar, press `TAB` or reload the page once.
-
-By default, the search bar is using Google search but if prefix with certain command, it will redirect to other search engine.
-
-To use a command, type the command name with space and the search query.
-
-For example:
-```
-yt blue archive // Search "blue archive" in youtube
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-This will redirect to youtube search with query "blue archive".
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-### Available Command
-- `yt` - Youtube
-- `gh` - Go directly to github link
-- `ask` - Perplexity search
-- `gpt` - Create a new conversation with ChatGPT
-- `cl` - Create a new conversation with Claude
-- `<number>` (which in range of pinned tab) - Go to pinned tab
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-## Shortcut
-Same with command but without space.
-
-Shortcut will go directly to the link.
-
-For example:
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 ```
-:8000 // Go to http://localhost:8000
-```
-
-### Available Shortcut
-- `:` - http://localhost:<query>
-- `//` - https://<query>
-
-## Customization
-It's a single html file dude, just do whatever you want.
