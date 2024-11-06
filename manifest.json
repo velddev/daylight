@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Veld Start Page",
+  "name": "Daylight Startpage",
   "version": "1.0",
-  "description": "A new tab page experience",
+  "description": "A clean startpage for your browser.",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
