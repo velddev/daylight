@@ -274,3 +274,8 @@ body {
   opacity: 0;
   transform: translateY(16px);
 }
+
+.card {
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px) saturate(150%) brightness(1.1);
+}

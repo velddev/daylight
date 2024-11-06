@@ -21,6 +21,9 @@ type SettingsType = {
     selectedAssetId: string;
     savedAssets: BackgroundAsset[];
   };
+  keys: {
+    openai: string | null;
+  };
   pins: PinType[];
 };
 
@@ -34,6 +37,9 @@ const defaultSettings: SettingsType = {
         id: "preload",
       },
     ],
+  },
+  keys: {
+    openai: null,
   },
   pins: [
     { type: "twitter", url: "https://twitter.com" },
@@ -68,9 +74,18 @@ export class SettingsManager extends EventTarget {
     return this.settings.background.savedAssets;
   }
 
+  get keys() {
+    return this.settings.keys;
+  }
+
   addBackground(asset: BackgroundAsset) {
     this.settings.background.savedAssets.push(asset);
     logger.debug("add background", asset);
+    this.save();
+  }
+
+  addKey(provider: keyof SettingsType["keys"], key: string) {
+    this.settings.keys[provider] = key;
     this.save();
   }
 
@@ -109,6 +124,12 @@ export class SettingsManager extends EventTarget {
       console.error("Saved assets not found, using default settings");
       this.settings.background.savedAssets =
         defaultSettings.background.savedAssets;
+      hadIssues = true;
+    }
+
+    if (!this.settings.keys) {
+      console.error("Keys not found, using default settings");
+      this.settings.keys = defaultSettings.keys;
       hadIssues = true;
     }
 

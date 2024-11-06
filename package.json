@@ -11,6 +11,7 @@
     "release": "py scripts/pack.py"
   },
   "dependencies": {
+    "openai": "^4.71.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4"
