@@ -1,4 +1,4 @@
-import { PinProps } from "../components/pin";
+import { PinProps } from "../components/icon-pin";
 
 export default [
   { type: "twitter", url: "https://twitter.com/" },

@@ -9,7 +9,7 @@ import {
   YoutubeIcon,
 } from "./icons";
 import pins from "../config/pins";
-import { getPinIcon } from "./pin";
+import { getPinIcon } from "./icon-pin";
 
 type LinkProvider = {
   id: string;
@@ -123,21 +123,13 @@ const linkProviders: LinkProvider[] = [
   },
 ];
 
-/**
- *
- * @param {string | null} currentMode
- * @param {string} search
- * @returns {string | null}
- */
 const detectSearchMode = (currentMode: string | null, search: string) => {
-  console.log({ currentMode, search });
   if (currentMode != null) {
     const provider = getModeById(currentMode);
     if (provider && provider.match(search) === null) return null;
   }
 
   const newProvider = linkProviders.find((p) => p.match(search) !== null);
-  console.log({ newProvider });
   return newProvider !== undefined ? newProvider.id : null;
 };
 
@@ -162,6 +154,7 @@ export const InputBar = () => {
 
   return (
     <form
+      className="rounded-md"
       id="search"
       onSubmit={(e) => {
         e.preventDefault();
@@ -207,7 +200,6 @@ export const InputBar = () => {
         onInput={(e) => {
           const search = (e.target as HTMLInputElement).value;
           const newMode = detectSearchMode(mode, search);
-          console.log({ search, mode, newMode });
           setMode(newMode);
         }}
         value={value}

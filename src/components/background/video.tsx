@@ -1,6 +1,11 @@
 import { useEffect, useRef } from "react";
+import { BackgroundAssetWithUrl } from "./types";
 
-export const BackgroundVideo = () => {
+export const BackgroundVideo = ({
+  asset,
+}: {
+  asset: BackgroundAssetWithUrl;
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -24,8 +29,17 @@ export const BackgroundVideo = () => {
   }, [videoRef]);
 
   return (
-    <video id="bg" ref={videoRef} autoPlay muted loop>
-      <source src="./vid_src.mp4" />
-    </video>
+    <>
+      <video
+        className="fixed w-full h-full object-cover -z-3"
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+      >
+        <source src={asset.url} />
+      </video>
+      <div className="fixed inset-0 -z-2 bg-black/20" />
+    </>
   );
 };
