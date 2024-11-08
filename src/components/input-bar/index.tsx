@@ -1,24 +1,26 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ComponentType, ReactNode, useEffect, useState } from "react";
 import {
   ClaudeIcon,
   GithubIcon,
   GlobeIcon,
+  IconProps,
   NetworkIcon,
   OpenAIIcon,
   PerplexityIcon,
   YoutubeIcon,
 } from "../icons";
-import pins from "../../config/pins";
 import { getPinIcon } from "../icon-pin";
 import { Suggestion, useSuggestions } from "./useSuggestions";
 import { twMerge } from "tailwind-merge";
+import { SettingsManager } from "../../lib/settings";
+import { useSettings } from "../../providers/SettingsProvider";
 
 type LinkProvider = {
   id: string;
   name: string;
-  match: (search: string) => string | null;
-  link: (search: string) => string;
-  icon: (search: string) => ReactNode;
+  match: (search: string, settings: SettingsManager) => string | null;
+  link: (search: string, settings: SettingsManager) => string;
+  icon: (search: string, settings: SettingsManager) => ComponentType<IconProps>;
 };
 
 const linkProviders: LinkProvider[] = [
@@ -32,7 +34,7 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `https:${search}`,
-    icon: () => <GlobeIcon />,
+    icon: () => GlobeIcon,
   },
   {
     id: "github",
@@ -44,7 +46,7 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `http://github.com/${search}`,
-    icon: () => <GithubIcon />,
+    icon: () => GithubIcon,
   },
   {
     id: "localhost",
@@ -56,7 +58,7 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `http://localhost${search}`,
-    icon: () => <NetworkIcon />,
+    icon: () => NetworkIcon,
   },
   {
     id: "youtube",
@@ -68,13 +70,17 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `https://www.youtube.com/results?search_query=${search}`,
-    icon: () => <YoutubeIcon />,
+    icon: () => YoutubeIcon,
   },
   {
     id: "pin",
     name: "Pinned",
-    match: (search) => {
-      if (!Number.isNaN(+search) && +search > 0 && +search <= pins.length) {
+    match: (search, settings) => {
+      if (
+        !Number.isNaN(+search) &&
+        +search > 0 &&
+        +search <= settings.pins.length
+      ) {
         return search;
       }
       return null;
@@ -85,7 +91,7 @@ const linkProviders: LinkProvider[] = [
           +search - 1
         ] as HTMLAnchorElement
       ).href,
-    icon: (search) => getPinIcon(pins[+search - 1].type),
+    icon: (search, settings) => getPinIcon(settings.pins[+search - 1].type),
   },
   {
     id: "ask",
@@ -97,7 +103,7 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `https://www.perplexity.ai/search/new?q=${search}`,
-    icon: () => <PerplexityIcon />,
+    icon: () => PerplexityIcon,
   },
   {
     id: "chatgpt",
@@ -109,7 +115,7 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `https://chat.openai.com/?q=${search}`,
-    icon: () => <OpenAIIcon />,
+    icon: () => OpenAIIcon,
   },
   {
     id: "claude",
@@ -121,26 +127,35 @@ const linkProviders: LinkProvider[] = [
       return null;
     },
     link: (search) => `https://claude.ai/new?q=${search}`,
-    icon: () => <ClaudeIcon />,
+    icon: () => ClaudeIcon,
   },
 ];
 
-const detectSearchMode = (currentMode: string | null, search: string) => {
+const detectSearchMode = (
+  currentMode: string | null,
+  search: string,
+  settings: SettingsManager
+) => {
   if (currentMode != null) {
     const provider = getModeById(currentMode);
-    if (provider && provider.match(search) === null) return null;
+    if (provider && provider.match(search, settings) === null) return null;
   }
 
-  const newProvider = linkProviders.find((p) => p.match(search) !== null);
+  const newProvider = linkProviders.find(
+    (p) => p.match(search, settings) !== null
+  );
   return newProvider !== undefined ? newProvider.id : null;
 };
 
-const composeLink = (search: string) => {
-  const mode = detectSearchMode(null, search);
+const composeLink = (search: string, settings: SettingsManager) => {
+  const mode = detectSearchMode(null, search, settings);
   if (mode != null) {
     const provider = getModeById(mode);
     if (provider != null) {
-      return provider.link(search);
+      const query = provider.match(search, settings);
+      if (query != null) {
+        return provider.link(query, settings);
+      }
     }
   }
 
@@ -155,13 +170,16 @@ export const InputBar = () => {
   const [mode, setMode] = useState<string | null>(null);
   const [s, setS] = useState<Suggestion[] | null>(null);
   const suggestions = useSuggestions();
+  const settings = useSettings();
 
   useEffect(() => {
     if (!value) {
       setS([]);
     }
 
-    const valueMode = detectSearchMode(null, value);
+    if (!settings) return;
+
+    const valueMode = detectSearchMode(null, value, settings);
     if (valueMode != null) {
       setS([]);
       return;
@@ -178,6 +196,13 @@ export const InputBar = () => {
     };
   }, [value]);
 
+  let icon = null;
+  const iconMode = getModeById(mode);
+  if (iconMode && settings) {
+    const Icon = iconMode.icon(value, settings);
+    icon = <Icon className="w-5 h-5" />;
+  }
+
   return (
     <div className="relative">
       <form
@@ -185,9 +210,10 @@ export const InputBar = () => {
         id="search"
         onSubmit={(e) => {
           e.preventDefault();
+          if (!settings) return;
           const provider = getModeById(mode);
           if (provider) {
-            window.location.href = composeLink(value);
+            window.location.href = composeLink(value, settings);
           }
         }}
       >
@@ -205,9 +231,9 @@ export const InputBar = () => {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className="icon"
             >
               <circle cx="11" cy="11" r="8"></circle>
@@ -220,13 +246,14 @@ export const InputBar = () => {
             }`}
             id="search-icon-override"
           >
-            {getModeById(mode)?.icon(value) ?? ""}
+            {icon}
           </div>
         </div>
         <input
           onInput={(e) => {
+            if (!settings) return;
             const search = (e.target as HTMLInputElement).value;
-            const newMode = detectSearchMode(mode, search);
+            const newMode = detectSearchMode(mode, search, settings);
             setMode(newMode);
           }}
           value={value}

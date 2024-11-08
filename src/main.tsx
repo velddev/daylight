@@ -6,10 +6,10 @@ import { IconPin, Pin } from "./components/icon-pin";
 import { Background } from "./components/background";
 import { SettingsDrawer } from "./components/settings-drawer";
 import { SettingsProvider } from "./providers/SettingsProvider";
-import pins from "./config/pins";
 import { SlidersIcon } from "./components/icons";
 import "./styles/index.css";
 import { twMerge } from "tailwind-merge";
+import { PinStack } from "./components/pin-stack";
 
 const Index = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -38,17 +38,7 @@ const Index = () => {
         <Clock />
         <div className="pb-[64px]" />
         <InputBar />
-        <section className="flex w-full align-middle h-12 mt-2 justify-between">
-          <section className="flex gap-2 w-full">
-            {pins.map((pin, index) => (
-              <IconPin
-                key={pin.type + "-" + index}
-                type={pin.type}
-                url={pin.url}
-              />
-            ))}
-          </section>
-        </section>
+        <PinStack />
         <div className="pb-[128px]" />
       </main>
     </>

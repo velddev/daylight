@@ -1,24 +1,45 @@
-import { ReactNode } from "react";
-import { BlueSkyIcon, TwitterIcon, YoutubeIcon } from "./icons";
+import { ComponentType, ReactNode } from "react";
+import * as icon from "./icons";
 import { twMerge } from "tailwind-merge";
 
-const icons = {
-  twitter: <TwitterIcon className="w-5 h-5" />,
-  bluesky: <BlueSkyIcon className="w-5 h-5" />,
-  youtube: <YoutubeIcon className="w-5 h-5" />,
+export const pinIconNames = Object.keys(icon);
+pinIconNames.sort();
+
+export const pinIcons = {
+  twitter: icon.TwitterIcon,
+  bluesky: icon.BlueSkyIcon,
+  youtube: icon.YoutubeIcon,
+  github: icon.GithubIcon,
+  globe: icon.GlobeIcon,
+  network: icon.NetworkIcon,
+  close: icon.CloseIcon,
+  trash: icon.TrashIcon,
+  sliders: icon.SlidersIcon,
+  envelope: icon.EnvelopeIcon,
+  facebook: icon.FacebookIcon,
+  claude: icon.ClaudeIcon,
+  openai: icon.OpenAIIcon,
+  perplexity: icon.PerplexityIcon,
 } as const;
 
 export type PinType = {
-  type: keyof typeof icons;
+  type: keyof typeof pinIcons;
   url: string;
 };
 
 export type PinProps = PinType & {};
 
-export const getPinIcon = (type: keyof typeof icons) => icons[type];
+export const getPinIcon = (
+  type: keyof typeof pinIcons
+): ComponentType<icon.IconProps> => pinIcons[type];
 
 export const IconPin = ({ type, url }: PinProps) => {
-  return <Pin href={url}>{getPinIcon(type)}</Pin>;
+  const Icon = getPinIcon(type);
+  return (
+    <Pin href={url}>
+      <Icon className="w-5 h-5" />
+    </Pin>
+  );
 };
 
 export const Pin = ({
@@ -37,7 +58,7 @@ export const Pin = ({
       href={href}
       onClick={onClick}
       className={twMerge(
-        `h-full aspect-square flex justify-center items-center bg-black/40 backdrop-blur-md rounded-md text-white hover:bg-black/20 transition-all`,
+        `h-full aspect-square size-12 flex justify-center items-center bg-black/40 backdrop-blur-md rounded-md text-white hover:bg-black/20 transition-all`,
         className
       )}
     >

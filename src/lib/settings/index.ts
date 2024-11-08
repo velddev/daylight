@@ -78,6 +78,10 @@ export class SettingsManager extends EventTarget {
     return this.settings.keys;
   }
 
+  get pins() {
+    return this.settings.pins;
+  }
+
   addBackground(asset: BackgroundAsset) {
     this.settings.background.savedAssets.push(asset);
     logger.debug("add background", asset);
@@ -86,6 +90,16 @@ export class SettingsManager extends EventTarget {
 
   addKey(provider: keyof SettingsType["keys"], key: string) {
     this.settings.keys[provider] = key;
+    this.save();
+  }
+
+  addPin(pin: PinType) {
+    this.settings.pins.push(pin);
+    this.save();
+  }
+
+  removePin(index: number) {
+    this.settings.pins.splice(index, 1);
     this.save();
   }
 
