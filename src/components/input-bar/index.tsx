@@ -1,4 +1,4 @@
-import { ComponentType, ReactNode, useEffect, useState } from "react";
+import { ComponentType, useEffect, useState } from "react";
 import {
   ClaudeIcon,
   GithubIcon,
@@ -211,10 +211,7 @@ export const InputBar = () => {
         onSubmit={(e) => {
           e.preventDefault();
           if (!settings) return;
-          const provider = getModeById(mode);
-          if (provider) {
-            window.location.href = composeLink(value, settings);
-          }
+          window.location.href = composeLink(value, settings);
         }}
       >
         <div className="input-search-element">

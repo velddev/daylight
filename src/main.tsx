@@ -2,7 +2,7 @@ import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { InputBar } from "./components/input-bar";
 import { Clock } from "./components/clock";
-import { IconPin, Pin } from "./components/icon-pin";
+import { Pin } from "./components/icon-pin";
 import { Background } from "./components/background";
 import { SettingsDrawer } from "./components/settings-drawer";
 import { SettingsProvider } from "./providers/SettingsProvider";
